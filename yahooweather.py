@@ -45,6 +45,12 @@ class YahooWeather(object):
 
         return False
 
+    def _getData(self, key):
+        """Get a key from dict or a empty dict"""
+        if key in self._data:
+            return self._data[key]
+        return {}
+
     @property
     def RawData(self):
         """Raw Data"""
@@ -53,13 +59,24 @@ class YahooWeather(object):
     @property
     def Forecast(self):
         """Forecast data 0-5 Days"""
-        if "forecast" in self._data:
-            return self._data["forecast"]
-        return {}
+        return self._getData("forecast")
 
     @property
     def Now(self):
         """Current weather data"""
-        if "condition" in self._data:
-            return self._data["condition"]
-        return {}
+        return self._getData("condition")
+
+    @property
+    def Astronomy(self):
+        """Astronomy weather data"""
+        return self._getData("astronomy")
+
+    @property
+    def Atmosphere(self):
+        """Atmosphere weather data"""
+        return self._getData("atmosphere")
+
+    @property
+    def Wind(self):
+        """Wind weather data"""
+        return self._getData("wind")
