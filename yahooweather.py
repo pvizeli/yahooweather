@@ -1,6 +1,7 @@
 """This is a Python module that provides an interface to the Yahoo! Weather
 
-    more details from https://github.com/pvizeli/yahooweather
+more details from https://github.com/pvizeli/yahooweather
+or API: https://developer.yahoo.com/weather/
 """
 import json
 import logging
@@ -17,14 +18,15 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class YahooWeather(object):
+    """Yahoo! API access."""
     def __init__(self, woeid, unit=UNIT_C):
-        """Init Object"""
+        """Init Object."""
         self._woeid = woeid
         self._unit = unit
-        self._data = None
+        self._data = {}
 
     def updateWeather(self):
-        """Fetch weather data from Yahoo! True if success"""
+        """Fetch weather data from Yahoo! True if success."""
         yql = _YAHOO_YQL.format(self._woeid, self._unit)
         url = _YAHOO_BASE_URL.format(urlencode({'q': yql}))
 
@@ -37,46 +39,49 @@ class YahooWeather(object):
             # parse jason
             data = json.loads(rawData.decode("utf-8"))
 
-            self._data = data["query"]["results"]
-            return True
+            _LOGGER.debug("Query data from yahoo: %s", str(data))
+            tmpData = data.get("query", {}).get("results", {})
+
+            # data exists
+            if "channel" in tmpData:
+                self._data = tmpData["channel"]
+                return True
+            else:
+                _LOGGER.error("Fetch no weather data Yahoo!")
+                self._data = {}
+                return False
+
         except urllib.error.HTTPError:
             _LOGGER.critical("Can't fetch data from Yahoo!")
-            self._data = None
 
         return False
 
-    def _getData(self, key):
-        """Get a key from dict or a empty dict"""
-        if key in self._data:
-            return self._data[key]
-        return {}
-
     @property
     def RawData(self):
-        """Raw Data"""
+        """Raw Data."""
         return self._data
 
     @property
     def Forecast(self):
-        """Forecast data 0-5 Days"""
-        return self._getData("forecast")
+        """Forecast data 0-5 Days."""
+        return self._data.get("item", {}).get("forecast", None)
 
     @property
     def Now(self):
-        """Current weather data"""
-        return self._getData("condition")
+        """Current weather data."""
+        return self._data.get("item", {}).get("condition", None)
 
     @property
     def Astronomy(self):
-        """Astronomy weather data"""
-        return self._getData("astronomy")
+        """Astronomy weather data."""
+        return self._data.get("astronomy", None)
 
     @property
     def Atmosphere(self):
-        """Atmosphere weather data"""
-        return self._getData("atmosphere")
+        """Atmosphere weather data."""
+        return self._data.get("atmosphere", None)
 
     @property
     def Wind(self):
-        """Wind weather data"""
-        return self._getData("wind")
+        """Wind weather data."""
+        return self._data.get("wind", None)
