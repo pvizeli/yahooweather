@@ -62,6 +62,11 @@ class YahooWeather(object):
         return self._data
 
     @property
+    def Units(self):
+        """Return dict with units."""
+        return self._data.get("units", {})
+
+    @property
     def Forecast(self):
         """Forecast data 0-5 Days."""
         return self._data.get("item", {}).get("forecast", None)

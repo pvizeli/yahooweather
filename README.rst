@@ -4,7 +4,7 @@ Python modul for access to yahoo! weather
 
 Example
 -------
-.. code:: python
+.. code-block:: python
     import logging
     from yahooweather import YahooWeather, UNIT_C
 

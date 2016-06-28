@@ -6,6 +6,7 @@ logging.basicConfig(level=logging.DEBUG)
 yweather = YahooWeather(12891864, UNIT_C)
 if yweather.updateWeather():
     print("RawData: %s" % str(yweather.RawData))
+    print("Units: %s" % str(yweather.Units))
     print("Now: %s" % str(yweather.Now))
     print("Forecast: %s" % str(yweather.Forecast))
     print("Wind: %s" % str(yweather.Wind))
