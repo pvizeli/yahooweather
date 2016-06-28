@@ -3,9 +3,11 @@ from setuptools import setup
 with open('README.rst') as f:
     long_description = f.read()
 
+VERSION = "0.1"
+
 setup(
     name='yahooweather',
-    version='0.1',
+    version=VERSION,
     license='BSD License',
     author='Pascal Vizeli',
     author_email='pvizeli@syshack.ch',
