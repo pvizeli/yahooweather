@@ -12,5 +12,9 @@ if yweather.updateWeather():
     print("Wind: %s" % str(yweather.Wind))
     print("Atmosphere: %s" % str(yweather.Atmosphere))
     print("Astronomy: %s" % str(yweather.Astronomy))
+
+    data = yweather.Now
+    print("Weather image from current: %s" %
+          yweather.getWeatherImage(data["code"]))
 else:
     print("Can't read data from yahoo!")

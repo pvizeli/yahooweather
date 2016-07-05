@@ -90,3 +90,6 @@ class YahooWeather(object):
     def Wind(self):
         """Wind weather data."""
         return self._data.get("wind", None)
+
+    def getWeatherImage(self, code):
+        return "http://l.yimg.com/a/i/us/we/52/{}.gif".format(code)

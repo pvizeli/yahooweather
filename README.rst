@@ -20,12 +20,17 @@ Example
         print("Wind: %s" % str(yweather.Wind))
         print("Atmosphere: %s" % str(yweather.Atmosphere))
         print("Astronomy: %s" % str(yweather.Astronomy))
+
+        data = yweather.Now
+        print("Weather image from current: %s" %
+              yweather.getWeatherImage(data["code"]))
     else:
         print("Can't read data from yahoo!")
 
 Rate Limits
 -----------
-Use of the Yahoo Weather API should not exceed reasonable request volume. Access is limited to 2,000 signed calls per day.
+Use of the Yahoo Weather API should not exceed reasonable request volume.
+Access is limited to 2,000 signed calls per day.
 
 Links
 -----
