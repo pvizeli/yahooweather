@@ -9,7 +9,8 @@ from urllib.parse import urlencode
 from urllib.request import urlopen
 
 _YAHOO_BASE_URL = "https://query.yahooapis.com/v1/public/yql?{0}&format=json"
-_YAHOO_YQL = "select * from weather.forecast where woeid = '{0}' and u='{1}'"
+_YQL_WEATHER = "SELECT * FROM weather.forecast WHERE woeid = '{0}' and u='{1}'"
+_YQL_WOEID = "SELECT woeid FROM geo.places WHERE text = '({0},{1})'"
 
 UNIT_C = 'c'
 UNIT_F = 'f'
@@ -17,8 +18,42 @@ UNIT_F = 'f'
 _LOGGER = logging.getLogger(__name__)
 
 
+def _yql_query(yql):
+    """Fetch data from Yahoo! Return a dict if successfull or None."""
+    url = _YAHOO_BASE_URL.format(urlencode({'q': yql}))
+
+    # send request
+    _LOGGER.debug("Send request to url: %s", url)
+    try:
+        request = urlopen(url)
+        rawData = request.read()
+
+        # parse jason
+        data = json.loads(rawData.decode("utf-8"))
+
+        _LOGGER.debug("Query data from yahoo: %s", str(data))
+        return data.get("query", {}).get("results", {})
+
+    except urllib.error.HTTPError:
+        _LOGGER.critical("Can't fetch data from Yahoo!")
+
+    return None
+
+
+def get_woeid(lat, lon):
+    """Ask Yahoo! who is the woeid from GPS position."""
+    yql = _YQL_WOEID.format(lat, lon)
+
+    # send request
+    tmpData = _yql_query(yql)
+
+    # found woid?
+    return tmpData.get("place", {}).get("woeid", None)
+
+
 class YahooWeather(object):
     """Yahoo! API access."""
+
     def __init__(self, woeid, unit=UNIT_C):
         """Init Object."""
         self._woeid = woeid
@@ -27,33 +62,18 @@ class YahooWeather(object):
 
     def updateWeather(self):
         """Fetch weather data from Yahoo! True if success."""
-        yql = _YAHOO_YQL.format(self._woeid, self._unit)
-        url = _YAHOO_BASE_URL.format(urlencode({'q': yql}))
+        yql = _YQL_WEATHER.format(self._woeid, self._unit)
 
         # send request
-        _LOGGER.debug("Send request to url: %s", url)
-        try:
-            request = urlopen(url)
-            rawData = request.read()
+        tmpData = _yql_query(yql)
 
-            # parse jason
-            data = json.loads(rawData.decode("utf-8"))
+        # data exists
+        if "channel" in tmpData:
+            self._data = tmpData["channel"]
+            return True
 
-            _LOGGER.debug("Query data from yahoo: %s", str(data))
-            tmpData = data.get("query", {}).get("results", {})
-
-            # data exists
-            if "channel" in tmpData:
-                self._data = tmpData["channel"]
-                return True
-            else:
-                _LOGGER.error("Fetch no weather data Yahoo!")
-                self._data = {}
-                return False
-
-        except urllib.error.HTTPError:
-            _LOGGER.critical("Can't fetch data from Yahoo!")
-
+        _LOGGER.error("Fetch no weather data Yahoo!")
+        self._data = {}
         return False
 
     @property
