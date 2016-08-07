@@ -68,7 +68,7 @@ class YahooWeather(object):
         tmpData = _yql_query(yql)
 
         # data exists
-        if "channel" in tmpData:
+        if tmpData is not None and "channel" in tmpData:
             self._data = tmpData["channel"]
             return True
 
