@@ -5,6 +5,7 @@ or API: https://developer.yahoo.com/weather/
 """
 import json
 import logging
+import urllib.error
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
