@@ -35,7 +35,7 @@ def _yql_query(yql):
         _LOGGER.debug("Query data from yahoo: %s", str(data))
         return data.get("query", {}).get("results", {})
 
-    except urllib.error.HTTPError:
+    except (urllib.error.HTTPError, urllib.error.URLError):
         _LOGGER.critical("Can't fetch data from Yahoo!")
 
     return None
