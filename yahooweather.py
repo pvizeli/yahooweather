@@ -48,6 +48,10 @@ def get_woeid(lat, lon):
     # send request
     tmpData = _yql_query(yql)
 
+    if tmpData is None:
+        _LOGGER.error("No woid is received!")
+        return None
+
     # found woid?
     return tmpData.get("place", {}).get("woeid", None)
 
