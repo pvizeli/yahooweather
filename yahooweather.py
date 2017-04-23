@@ -118,4 +118,4 @@ class YahooWeather(object):
 
     def getWeatherImage(self, code):
         """Create a link to weather image from yahoo code."""
-        return "http://l.yimg.com/a/i/us/we/52/{}.gif".format(code)
+        return "https://l.yimg.com/a/i/us/we/52/{}.gif".format(code)
